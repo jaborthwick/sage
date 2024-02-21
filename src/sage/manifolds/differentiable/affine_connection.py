@@ -2211,10 +2211,27 @@ class AffineConnection(SageObject):
                     forms[(i1,j1)] = omega
             self._connection_forms[frame] = forms
         return self._connection_forms[frame][(i,j)]
-    
-    def display_connection_forms(self,frame):
 
-        return None
+    def display_connection_forms(self,frame=None,chart=None):
+        from sage.misc.latex import latex
+        from sage.tensor.modules.format_utilities import FormattedExpansion
+        output_string = r'(\omega^i_j)=\left(\begin{array}{cccc}'
+        dom=self._domain
+        jmin = dom.start_index()
+        imax = jmin + dom.dim() - 1
+        for i in dom.irange():
+            for j in dom.irange():
+                connect_form = self.connection_form(i,j,frame).copy()
+                if j > jmin:
+                    output_string += r'&'
+                output_string += latex(connect_form.display(frame, chart))
+            if i < imax:
+                output_string += r'\\'
+        output_string +=r'\end{array}\right)'
+
+        text_out = str([[str(self.connection_form(i, j, frame).copy().display(frame, chart))
+                     for j in dom.irange()] for i in dom.irange()])
+        return FormattedExpansion(text_out, output_string)
 
     def torsion_form(self, i, frame=None):
         r"""
