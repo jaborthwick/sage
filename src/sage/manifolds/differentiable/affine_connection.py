@@ -2211,6 +2211,10 @@ class AffineConnection(SageObject):
                     forms[(i1,j1)] = omega
             self._connection_forms[frame] = forms
         return self._connection_forms[frame][(i,j)]
+    
+    def display_connection_forms(self,frame):
+
+        return None
 
     def torsion_form(self, i, frame=None):
         r"""
