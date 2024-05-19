@@ -2,7 +2,7 @@
 # that activate keg-only homebrew package installations
 
 HOMEBREW=`brew --prefix` || return 1
-for l in bzip2 texinfo polymake; do
+for l in bzip2 texinfo polymake m4; do
     if [ -d "$HOMEBREW/opt/$l/bin" ]; then
         PATH="$HOMEBREW/opt/$l/bin:$PATH"
     fi

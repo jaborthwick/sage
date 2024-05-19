@@ -2212,7 +2212,10 @@ class AffineConnection(SageObject):
             self._connection_forms[frame] = forms
         return self._connection_forms[frame][(i,j)]
 
-    def display_connection_forms(self,frame=None,chart=None):
+    def display_connection_forms(self,frame=None,chart=None,apply=None):
+        r"""
+        Displays the connection forms as a matrix
+        """
         from sage.misc.latex import latex
         from sage.tensor.modules.format_utilities import FormattedExpansion
         output_string = r'(\omega^i_j)=\left(\begin{array}{cccc}'
@@ -2222,9 +2225,37 @@ class AffineConnection(SageObject):
         for i in dom.irange():
             for j in dom.irange():
                 connect_form = self.connection_form(i,j,frame).copy()
+                if apply!=None:
+                    connect_form.apply_map(apply)
                 if j > jmin:
                     output_string += r'&'
                 output_string += latex(connect_form.display(frame, chart))
+            if i < imax:
+                output_string += r'\\'
+        output_string +=r'\end{array}\right)'
+
+        text_out = str([[str(self.connection_form(i, j, frame).copy().display(frame, chart))
+                     for j in dom.irange()] for i in dom.irange()])
+        return FormattedExpansion(text_out, output_string)
+    
+    def display_curvature_form(self,frame=None,chart=None,apply=None):
+        r"""
+        Displays the curvature forms in matrix notation
+        """
+        from sage.misc.latex import latex
+        from sage.tensor.modules.format_utilities import FormattedExpansion
+        output_string = r'(\omega^i_j)=\left(\begin{array}{cccc}'
+        dom=self._domain
+        jmin = dom.start_index()
+        imax = jmin + dom.dim() - 1
+        for i in dom.irange():
+            for j in dom.irange():
+                curv_form = self.curvature_form(i,j,frame).copy()
+                if apply!=None:
+                    curv_form.apply_map(apply)
+                if j > jmin:
+                    output_string += r'&'
+                output_string += latex(curv_form.display(frame, chart))
             if i < imax:
                 output_string += r'\\'
         output_string +=r'\end{array}\right)'
