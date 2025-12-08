@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``cddlib``
 """
@@ -34,5 +33,5 @@ class CddExecutable(Executable):
             sage: isinstance(CddExecutable(), CddExecutable)
             True
         """
-        Executable.__init__(self, name=name, executable=name, spkg="cddlib",
-                            url="https://github.com/cddlib/cddlib", type="standard")
+        Executable.__init__(self, name=name, executable=name, spkg='cddlib',
+                            url='https://github.com/cddlib/cddlib', type='standard')

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Super modules
 """
@@ -38,9 +37,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
         - ``category`` -- a category `Cat`
         - ``*args`` -- further arguments for the functor
 
-        OUTPUT:
-
-        A join category.
+        OUTPUT: a join category
 
         This implements the property that subcategories constructed by
         the set of whitelisted axioms is a subcategory.
@@ -134,7 +131,7 @@ class SuperModules(SuperModulesCategory):
 
     def extra_super_categories(self):
         r"""
-        Adds :class:`VectorSpaces` to the super categories of ``self`` if
+        Add :class:`VectorSpaces` to the super categories of ``self`` if
         the base ring is a field.
 
         EXAMPLES::

@@ -82,9 +82,8 @@ class ConstantFieldExtension(FunctionFieldExtension):
     - ``F`` -- a function field whose constant field is `k`
 
     - ``k_ext`` -- an extension of `k`
-
     """
-    def __init__(self, F, k_ext):
+    def __init__(self, F, k_ext) -> None:
         """
         Initialize.
 
@@ -105,7 +104,7 @@ class ConstantFieldExtension(FunctionFieldExtension):
             # construct constant field extension F_ext of F
             def_poly = F.polynomial().base_extend(F_ext_base)
             F_ext = F_ext_base.extension(def_poly, names=def_poly.variable_name())
-        else: # rational function field
+        else:  # rational function field
             F_ext = F_ext_base
 
         # embedding of F into F_ext

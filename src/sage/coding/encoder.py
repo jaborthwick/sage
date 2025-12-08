@@ -23,6 +23,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object import SageObject
 
+
 class Encoder(SageObject):
     r"""
     Abstract top-class for :class:`Encoder` objects.
@@ -61,7 +62,7 @@ class Encoder(SageObject):
 
     def __init__(self, code):
         r"""
-        Initializes mandatory parameters for an :class:`Encoder` object.
+        Initialize mandatory parameters for an :class:`Encoder` object.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every linear code. An abstract
@@ -95,9 +96,10 @@ class Encoder(SageObject):
 
     def __ne__(self, other):
         r"""
-        Tests inequality of ``self`` and ``other``.
+        Test inequality of ``self`` and ``other``.
 
-        This is a generic implementation, which returns the inverse of ``__eq__`` for self.
+        This is a generic implementation, which returns the inverse of
+        ``__eq__`` for ``self``.
 
         EXAMPLES::
 
@@ -115,7 +117,7 @@ class Encoder(SageObject):
 
     def encode(self, word):
         r"""
-        Transforms an element of the message space into a codeword.
+        Transform an element of the message space into a codeword.
 
         This is a default implementation which assumes that the message
         space of the encoder is `F^{k}`, where `F` is
@@ -126,7 +128,7 @@ class Encoder(SageObject):
         .. NOTE::
 
             :meth:`encode` might be a partial function over ``self``'s :meth:`message_space`.
-            One should use the exception :class:`EncodingError` to catch attempts
+            One should use the exception :exc:`EncodingError` to catch attempts
             to encode words that are outside of the message space.
 
         One can use the following shortcut to encode a word with an encoder ``E``::
@@ -135,11 +137,9 @@ class Encoder(SageObject):
 
         INPUT:
 
-        - ``word`` -- a vector of the message space of the ``self``.
+        - ``word`` -- a vector of the message space of the ``self``
 
-        OUTPUT:
-
-        - a vector of :meth:`code`.
+        OUTPUT: a vector of :meth:`code`
 
         EXAMPLES::
 
@@ -149,7 +149,7 @@ class Encoder(SageObject):
             sage: word = vector(GF(2), (0, 1, 1, 0))
             sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
             sage: E.encode(word)
-            (1, 1, 0, 0, 1, 1, 0)
+            (0, 1, 1, 0, 0, 1, 1)
 
         If ``word`` is not in the message space of ``self``, it will return an exception::
 
@@ -167,14 +167,14 @@ class Encoder(SageObject):
 
     def __call__(self, m):
         r"""
-        Transforms an element of the message space into a codeword.
+        Transform an element of the message space into a codeword.
 
         This behaves the same as `self.encode`.
         See `sage.coding.encoder.Encoder.encode` for details.
 
         INPUT:
 
-        - ``word`` -- a vector of the message space of the ``self``.
+        - ``word`` -- a vector of the message space of the ``self``
 
         EXAMPLES::
 
@@ -183,7 +183,7 @@ class Encoder(SageObject):
             sage: word = vector(GF(2), (0, 1, 1, 0))
             sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
             sage: E(word)
-            (1, 1, 0, 0, 1, 1, 0)
+            (0, 1, 1, 0, 0, 1, 1)
 
             sage: F = GF(11)
             sage: Fx.<x> = F[]
@@ -204,16 +204,15 @@ class Encoder(SageObject):
 
         INPUT:
 
-        - ``c`` -- a codeword of :meth:`code`.
+        - ``c`` -- a codeword of :meth:`code`
 
-        - ``nocheck`` -- (default: ``False``) checks if ``c`` is in :meth:`code`. You might set
-          this to ``True`` to disable the check for saving computation. Note that if ``c`` is
-          not in :meth:`self` and ``nocheck = True``, then the output of :meth:`unencode` is
-          not defined (except that it will be in the message space of ``self``).
+        - ``nocheck`` -- boolean (default: ``False``); checks if ``c`` is in
+          :meth:`code`. You might set this to ``True`` to disable the check for
+          saving computation. Note that if ``c`` is not in :meth:`self` and
+          ``nocheck = True``, then the output of :meth:`unencode` is not
+          defined (except that it will be in the message space of ``self``).
 
-        OUTPUT:
-
-        - an element of the message space of ``self``
+        OUTPUT: an element of the message space of ``self``
 
         EXAMPLES::
 
@@ -225,7 +224,7 @@ class Encoder(SageObject):
             True
             sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
             sage: E.unencode(c)
-            (0, 1, 1, 0)
+            (1, 1, 0, 0)
 
         TESTS:
 
@@ -240,13 +239,14 @@ class Encoder(SageObject):
             ...
             EncodingError: Given word is not in the code
 
-        Note that since :issue:`21326`, codes cannot be of length zero::
+        Note that codes of length zero are now allowed (see :issue:`21326` and :issue:`40513`)::
 
-            sage: G = Matrix(GF(17), [])
+            sage: G = matrix(GF(2), 0, 0)
             sage: C = LinearCode(G)
-            Traceback (most recent call last):
-            ...
-            ValueError: length must be a non-zero positive integer
+            sage: C
+            [0, 0] linear code over GF(2)
+            sage: C.generator_matrix()
+            []
         """
         if not nocheck and c not in self.code():
             raise EncodingError("Given word is not in the code")
@@ -269,10 +269,10 @@ class Encoder(SageObject):
             sage: E = C.encoder()
             sage: E._unencoder_matrix()
             (
-            [0 0 1 1]
-            [0 1 0 1]
-            [1 1 1 0]
-            [0 1 1 1], (0, 1, 2, 3)
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            [0 0 0 1], (0, 1, 2, 3)
             )
         """
         info_set = self.code().information_set()
@@ -283,7 +283,7 @@ class Encoder(SageObject):
 
     def unencode_nocheck(self, c):
         r"""
-        Returns the message corresponding to ``c``.
+        Return the message corresponding to ``c``.
 
         When ``c`` is not a codeword, the output is unspecified.
 
@@ -293,12 +293,9 @@ class Encoder(SageObject):
 
         INPUT:
 
+        - ``c`` -- a codeword of :meth:`code`
 
-        - ``c`` -- a codeword of :meth:`code`.
-
-        OUTPUT:
-
-        - an element of the message space of ``self``.
+        OUTPUT: an element of the message space of ``self``
 
         EXAMPLES::
 
@@ -310,7 +307,7 @@ class Encoder(SageObject):
             True
             sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
             sage: E.unencode_nocheck(c)
-            (0, 1, 1, 0)
+            (1, 1, 0, 0)
 
         Taking a vector that does not belong to ``C`` will not raise an error but
         probably just give a non-sensical result::
@@ -320,7 +317,7 @@ class Encoder(SageObject):
             False
             sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
             sage: E.unencode_nocheck(c)
-            (0, 1, 1, 0)
+            (1, 1, 0, 0)
             sage: m = vector(GF(2), (0, 1, 1, 0))
             sage: c1 = E.encode(m)
             sage: c == c1
@@ -332,7 +329,7 @@ class Encoder(SageObject):
 
     def code(self):
         r"""
-        Returns the code for this :class:`Encoder`.
+        Return the code for this :class:`Encoder`.
 
         EXAMPLES::
 
@@ -347,7 +344,7 @@ class Encoder(SageObject):
 
     def message_space(self):
         r"""
-        Returns the ambient space of allowed input to :meth:`encode`.
+        Return the ambient space of allowed input to :meth:`encode`.
         Note that :meth:`encode` is possibly a partial function over
         the ambient space.
 
@@ -365,7 +362,7 @@ class Encoder(SageObject):
     @abstract_method(optional=True)
     def generator_matrix(self):
         r"""
-        Returns a generator matrix of the associated code of ``self``.
+        Return a generator matrix of the associated code of ``self``.
 
         This is an abstract method and it should be implemented separately.
         Reimplementing this for each subclass of :class:`Encoder` is not mandatory
@@ -379,11 +376,12 @@ class Encoder(SageObject):
             sage: C = LinearCode(G)
             sage: E = C.encoder()
             sage: E.generator_matrix()
-            [1 1 1 0 0 0 0]
-            [1 0 0 1 1 0 0]
-            [0 1 0 1 0 1 0]
-            [1 1 0 1 0 0 1]
+            [1 0 0 0 0 1 1]
+            [0 1 0 0 1 0 1]
+            [0 0 1 0 1 1 0]
+            [0 0 0 1 1 1 1]
         """
+
 
 class EncodingError(Exception):
     r"""

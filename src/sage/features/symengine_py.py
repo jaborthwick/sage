@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Check for symengine_py
 """
@@ -37,8 +36,9 @@ class symengine_py(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'symengine_py',
-                             [PythonModule('symengine', spkg="symengine_py",
-                                            url="https://pypi.org/project/symengine")])
+                             [PythonModule('symengine', spkg='symengine_py',
+                                            url='https://pypi.org/project/symengine')])
+
 
 def all_features():
     return [symengine_py()]

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Lie Algebras With Basis
 
@@ -44,7 +43,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             sage: LieAlgebras(QQ).WithBasis().example(Compositions())                   # needs sage.combinat sage.modules
             An example of a Lie algebra: the abelian Lie algebra on the
-             generators indexed by Compositions of non-negative integers
+             generators indexed by Compositions of nonnegative integers
              over Rational Field
         """
         if gens is None:

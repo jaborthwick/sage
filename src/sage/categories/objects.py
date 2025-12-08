@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Objects
 """
@@ -41,7 +40,7 @@ class Objects(Category_singleton):
 
     def additional_structure(self):
         """
-        Return ``None``
+        Return ``None``.
 
         Indeed, by convention, the category of objects defines no
         additional structure.
@@ -63,7 +62,7 @@ class Objects(Category_singleton):
         """
         return []
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Anything is in the category of objects.
 

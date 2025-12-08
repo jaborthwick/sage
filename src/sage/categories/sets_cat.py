@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Sets
 """
@@ -36,9 +35,9 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.misc.lazy_format import LazyFormat
+# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.quotients import QuotientsCategory
@@ -71,7 +70,6 @@ def print_compare(x, y):
         1 != 2
         sage: print_compare(1,1)
         1 == 1
-
     """
     if x == y:
         return LazyFormat("%s == %s") % (x, y)
@@ -136,9 +134,9 @@ class Sets(Category_singleton):
         <class 'sage.categories.examples.sets_cat.PrimeNumbers_Inherits'>
         <class 'sage.categories.examples.sets_cat.PrimeNumbers_Abstract'>
         <class 'sage.structure.unique_representation.UniqueRepresentation'>
+        <class 'sage.misc.fast_methods.WithEqualityById'>
         <class 'sage.structure.unique_representation.CachedRepresentation'>
         <class 'sage.structure.unique_representation.WithPicklingByInitArgs'>
-        <class 'sage.misc.fast_methods.WithEqualityById'>
         <class 'sage.structure.parent.Parent'>
         <class 'sage.structure.category_object.CategoryObject'>
         <class 'sage.structure.sage_object.SageObject'>
@@ -212,7 +210,6 @@ class Sets(Category_singleton):
     TESTS::
 
           sage: TestSuite(Sets()).run()
-
     """
 
     def super_categories(self):
@@ -573,7 +570,6 @@ class Sets(Category_singleton):
                 sage: Semigroups().Subobjects().is_subcategory(Semigroups().Subquotients())
                 True
                 sage: TestSuite(C).run()
-
             """
             return SubobjectsCategory.category_of(self)
 
@@ -1041,7 +1037,7 @@ class Sets(Category_singleton):
             return parent(element) == self
 
         @abstract_method
-        def __contains__(self, x):
+        def __contains__(self, x) -> bool:
             """
             Test whether the set ``self`` contains the object ``x``.
 
@@ -1064,7 +1060,7 @@ class Sets(Category_singleton):
 
             This is used both for illustration and testing purposes. If the
             set ``self`` is empty, :meth:`an_element` should raise the exception
-            :class:`EmptySetError`.
+            :exc:`EmptySetError`.
 
             This default implementation calls :meth:`_an_element_` and
             caches the result. Any parent should implement either
@@ -1207,7 +1203,6 @@ class Sets(Category_singleton):
             We restore ``P.element_class`` in a proper state for further tests::
 
                 sage: P.element_class.__eq__ = eq
-
             """
             tester = self._tester(**options)
             S = list(tester.some_elements()) + [None, 0]
@@ -1246,7 +1241,6 @@ class Sets(Category_singleton):
             We restore ``P.element_class`` in a proper state for further tests::
 
                 sage: P.element_class.__eq__ = eq
-
             """
             tester = self._tester(**options)
             S = list(tester.some_elements()) + [None, 0]
@@ -1278,7 +1272,6 @@ class Sets(Category_singleton):
                 ...
                 AssertionError: non transitive equality:
                 3 + O(3^2) == O(3) and O(3) == 0 but 3 + O(3^2) != 0
-
             """
             tester = self._tester(**options)
             S = list(tester.some_elements())
@@ -1525,7 +1518,6 @@ class Sets(Category_singleton):
                 sage: F(R) == QQ
                 True
                 sage: TestSuite(QQ).run()   # indirect doctest
-
             """
             tester = self._tester(**options)
             FO = self.construction()
@@ -1541,7 +1533,7 @@ class Sets(Category_singleton):
 
             INPUT:
 
-            - ``parents`` -- a list (or other iterable) of parents.
+            - ``parents`` -- list (or other iterable) of parents
 
             - ``category`` -- (default: ``None``) the category the
               Cartesian product belongs to. If ``None`` is passed,
@@ -1557,14 +1549,12 @@ class Sets(Category_singleton):
               for this Cartesian product (see also
               :class:`~sage.sets.cartesian_product.CartesianProduct`).
 
-            OUTPUT:
-
-            The Cartesian product.
+            OUTPUT: the Cartesian product
 
             EXAMPLES::
 
                 sage: C = AlgebrasWithBasis(QQ)
-                sage: A = C.example(); A.rename("A")                                    # needs sage.combinat sage.modules
+                sage: A = C.example(); A.rename('A')                                    # needs sage.combinat sage.modules
                 sage: A.cartesian_product(A, A)                                         # needs sage.combinat sage.modules
                 A (+) A (+) A
                 sage: ZZ.cartesian_product(GF(2), FiniteEnumeratedSet([1,2,3]))
@@ -1759,8 +1749,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     class ElementMethods:
         ## Should eventually contain the basic operations which are no math
         ## latex, hash, ...
-        ##def equal(x,y):
-        ##def =(x,y):
+        ##def equal(x, y):
+        ##def =(x, y):
 
         # Used by Element._test_category
         _dummy_attribute = None
@@ -1832,7 +1822,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             .. NOTE::
 
                 This is an optional method. A default implementation
-                raising :class:`NotImplementedError` could be provided instead.
+                raising :exc:`NotImplementedError` could be provided instead.
             """
 
         def is_injective(self):
@@ -1898,6 +1888,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     from sage.categories.facade_sets import FacadeSets as Facade
 
     class Infinite(CategoryWithAxiom):
+        class SubcategoryMethods:
+
+            def Finite(self):
+                """
+                Incompatible axiom.
+
+                EXAMPLES::
+
+                    sage: C = NN.category()
+                    sage: C.Finite()
+                    Traceback (most recent call last):
+                    ...
+                    TypeError: incompatible axioms: finite and infinite
+                """
+                raise TypeError("incompatible axioms: finite and infinite")
 
         class ParentMethods:
 
@@ -2187,7 +2192,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             sage: C = Sets().CartesianProducts().example()
             sage: C
             The Cartesian product of (Set of prime numbers (basic implementation),
-             An example of an infinite enumerated set: the non negative integers,
+             An example of an infinite enumerated set: the nonnegative integers,
              An example of a finite enumerated set: {1,2,3})
             sage: C.category()
             Category of Cartesian products of sets
@@ -2217,7 +2222,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 sage: Sets().CartesianProducts().example()
                 The Cartesian product of (Set of prime numbers (basic implementation),
-                 An example of an infinite enumerated set: the non negative integers,
+                 An example of an infinite enumerated set: the nonnegative integers,
                  An example of a finite enumerated set: {1,2,3})
             """
             from .finite_enumerated_sets import FiniteEnumeratedSets
@@ -2362,7 +2367,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                     sage: C = Sets().CartesianProducts().example(); C
                     The Cartesian product of (Set of prime numbers (basic implementation),
-                     An example of an infinite enumerated set: the non negative integers,
+                     An example of an infinite enumerated set: the nonnegative integers,
                      An example of a finite enumerated set: {1,2,3})
                     sage: C.an_element()
                     (47, 42, 1)
@@ -2382,8 +2387,32 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     False
                     sage: cartesian_product([S1,S2,S1]).is_empty()
                     True
+
+                Even when some parent did not implement ``is_empty``,
+                as long as one element is nonempty, the result can be determined::
+
+                    sage: C = ConditionSet(QQ, lambda x: x > 0)
+                    sage: C.is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([C,[]]).is_empty()
+                    True
+                    sage: cartesian_product([C,C]).is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
                 """
-                return any(c.is_empty() for c in self.cartesian_factors())
+                last_exception = None
+                for c in self.cartesian_factors():
+                    try:
+                        if c.is_empty():
+                            return True
+                    except (AttributeError, NotImplementedError) as e:
+                        last_exception = e
+                if last_exception is not None:
+                    raise NotImplementedError from last_exception
+                return False
 
             def is_finite(self):
                 r"""
@@ -2400,22 +2429,74 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     False
                     sage: cartesian_product([ZZ, Set(), ZZ]).is_finite()
                     True
+
+                TESTS:
+
+                This should still work even if some parent does not implement
+                ``is_finite``::
+
+                    sage: known_infinite_set = ZZ
+                    sage: unknown_infinite_set = Set([1]) + ConditionSet(QQ, lambda x: x > 0)
+                    sage: unknown_infinite_set.is_empty()
+                    False
+                    sage: unknown_infinite_set.is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([unknown_infinite_set, known_infinite_set]).is_finite()
+                    False
+                    sage: unknown_empty_set = ConditionSet(QQ, lambda x: False)
+                    sage: cartesian_product([known_infinite_set, unknown_empty_set]).is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
+                    sage: cartesian_product([unknown_infinite_set, Set([])]).is_finite()
+                    True
+                    sage: cartesian_product([Set([1, 2, 3]), Set([4, 5])]).is_finite()
+                    True
+                    sage: cartesian_product([unknown_infinite_set, unknown_infinite_set]).is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
+
+                Coverage test when one factor has emptiness unknown but result is finite::
+
+                    sage: s = ConditionSet(RR, lambda x: x^2 == 2, category=Sets().Finite())
+                    sage: s.is_finite()
+                    True
+                    sage: s.is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([s, Set([1, 2, 3])]).is_finite()
+                    True
                 """
-                f = self.cartesian_factors()
                 try:
                     # Note: some parent might not implement "is_empty". So we
                     # carefully isolate this test.
-                    test = any(c.is_empty() for c in f)
+                    if self.is_empty():
+                        return True
                 except (AttributeError, NotImplementedError):
-                    pass
-                else:
-                    if test:
-                        return test
-                return all(c.is_finite() for c in f)
+                    # it is unknown whether some set may be empty
+                    if all(c.is_finite() for c in self.cartesian_factors()):
+                        return True
+                    raise NotImplementedError
+
+                # in this case, all sets are definitely nonempty
+                last_exception = None
+                for c in self.cartesian_factors():
+                    try:
+                        if not c.is_finite():
+                            return False
+                    except (AttributeError, NotImplementedError) as e:
+                        last_exception = e
+                if last_exception is not None:
+                    raise NotImplementedError from last_exception
+                return True
 
             def cardinality(self):
                 r"""
-                Return the cardinality of self.
+                Return the cardinality of ``self``.
 
                 EXAMPLES::
 
@@ -2481,11 +2562,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: c2 = C.random_element(4,7)
                     sage: c2                   # random
                     (6, 5, 6, 4, 5, 6, 6, 4, 5, 5)
-                    sage: all(4 <= i < 7 for i in c2)
+                    sage: all(4 <= i <= 7 for i in c2)
                     True
                 """
                 return self._cartesian_product_of_elements(
-                        c.random_element(*args) for c in self.cartesian_factors())
+                    c.random_element(*args) for c in self.cartesian_factors())
 
             @abstract_method
             def _sets_keys(self):
@@ -2523,7 +2604,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                     sage: C = Sets().CartesianProducts().example(); C
                     The Cartesian product of (Set of prime numbers (basic implementation),
-                     An example of an infinite enumerated set: the non negative integers,
+                     An example of an infinite enumerated set: the nonnegative integers,
                      An example of a finite enumerated set: {1,2,3})
                     sage: x = C.an_element(); x
                     (47, 42, 1)
@@ -2600,8 +2681,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 EXAMPLES::
 
                     sage: # needs sage.modules
-                    sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-                    sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+                    sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+                    sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
                     sage: S = cartesian_product([F, G])
                     sage: x = (S.monomial((0,4)) + 2 * S.monomial((0,5))
                     ....:      + 3 * S.monomial((1,6)))
@@ -2619,9 +2700,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 EXAMPLES::
 
                     sage: # needs sage.modules
-                    sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-                    sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
-                    sage: H = CombinatorialFreeModule(ZZ, [4,7]); H.rename("H")
+                    sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+                    sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
+                    sage: H = CombinatorialFreeModule(ZZ, [4,7]); H.rename('H')
                     sage: S = cartesian_product([F, G, H])
                     sage: x = (S.monomial((0,4)) + 2 * S.monomial((0,5))
                     ....:      + 3 * S.monomial((1,6)) + 4 * S.monomial((2,4))
@@ -2657,7 +2738,6 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                  Category of modules with basis over Integer Ring,
                  ...
                  Category of objects]
-
             """
             from sage.categories.modules_with_basis import ModulesWithBasis
             return [ModulesWithBasis(self.base_ring())]
@@ -2696,7 +2776,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
             def _repr_(self):
                 r"""
-                Return the string representation of `self`.
+                Return the string representation of ``self``.
 
                 EXAMPLES::
 
@@ -2812,7 +2892,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: R in A.realizations()  # indirect doctest
                     True
 
-                Note: the test above uses ``QQ[x]`` to not interfer
+                Note: the test above uses ``QQ[x]`` to not interfere
                 with other tests.
                 """
                 assert realization.realization_of() is self
@@ -2824,9 +2904,10 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 INPUT:
 
-                - ``shorthands`` -- a list (or iterable) of strings (default: ``self._shorthands``)
-                  or ``"all"`` (for ``self._shorthands_all``)
-                - ``verbose`` -- boolean (default ``True``);
+                - ``shorthands`` -- list (or iterable) of strings
+                  (default: ``self._shorthands``)
+                  or ``'all'`` (for ``self._shorthands_all``)
+                - ``verbose`` -- boolean (default: ``True``);
                    whether to print the defined shorthands
 
                 EXAMPLES:
@@ -3050,7 +3131,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 return self.a_realization().an_element()
 
             # TODO: maybe this could be taken care of by Sets.Facade()?
-            def __contains__(self, x):
+            def __contains__(self, x) -> bool:
                 r"""
                 Test whether ``x`` is in ``self``, that is if it is an
                 element of some realization of ``self``.

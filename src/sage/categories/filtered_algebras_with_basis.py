@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Algebras With Basis
 
@@ -241,9 +240,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             - ``f`` -- a filtration-preserving linear map from ``self``
               to ``other`` (can be given as a morphism or as a function)
 
-            OUTPUT:
-
-            The graded linear map `\operatorname{gr} f`.
+            OUTPUT: the graded linear map `\operatorname{gr} f`
 
             EXAMPLES:
 

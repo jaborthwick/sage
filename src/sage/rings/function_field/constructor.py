@@ -39,6 +39,7 @@ AUTHORS:
 
 from sage.structure.factory import UniqueFactory
 
+
 class FunctionFieldFactory(UniqueFactory):
     """
     Return the function field in one variable with constant field ``F``. The
@@ -88,7 +89,7 @@ class FunctionFieldFactory(UniqueFactory):
             names = (names,)
         return (F, names)
 
-    def create_object(self, version, key,**extra_args):
+    def create_object(self, version, key, **extra_args):
         """
         Create the object from the key and extra arguments. This is only
         called if the object was not found in the cache.
@@ -142,7 +143,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         sage: L is M                                                                    # needs sage.rings.function_field
         True
     """
-    def create_key(self,polynomial,names):
+    def create_key(self, polynomial, names):
         """
         Given the arguments and keywords, create a key that uniquely
         determines this object.
@@ -167,15 +168,14 @@ class FunctionFieldExtensionFactory(UniqueFactory):
             sage: N.<z> = K.extension(z - 1)
             sage: M is N
             False
-
         """
         if names is None:
             names = polynomial.variable_name()
-        if not isinstance(names,tuple):
+        if not isinstance(names, tuple):
             names = (names,)
-        return (polynomial,names,polynomial.base_ring())
+        return (polynomial, names, polynomial.base_ring())
 
-    def create_object(self,version,key,**extra_args):
+    def create_object(self, version, key, **extra_args):
         """
         Create the object from the key and extra arguments. This is only
         called if the object was not found in the cache.
@@ -197,7 +197,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         base_field = f.base_ring()
         if isinstance(base_field, function_field_rational.RationalFunctionField):
             k = base_field.constant_field()
-            if k.is_finite(): # then we are in positive characteristic
+            if k.is_finite():  # then we are in positive characteristic
                 # irreducible and separable
                 if f.is_irreducible() and not all(e % k.characteristic() == 0 for e in f.exponents()):
                     # monic and integral

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Group algebras and beyond: the Algebra functorial construction
@@ -32,7 +31,7 @@ In particular, the product of two basis elements is induced by the
 product of the corresponding elements of the group, and the unit of
 the group algebra is indexed by the unit of the group::
 
-    sage: (s, t) = A.algebra_generators()
+    sage: s, t = A.algebra_generators()
     sage: s*t
     (1,2)
     sage: A.one_basis()
@@ -128,7 +127,6 @@ additional features::
      Category of semigroup algebras over Rational Field,
      ...
      Category of unital magma algebras over Rational Field,
-     ...
      Category of magma algebras over Rational Field,
      ...
      Category of set algebras over Rational Field,
@@ -592,9 +590,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
 
         - ``base_ring`` -- the base ring of the group algebra
 
-        OUTPUT:
-
-        A group algebra.
+        OUTPUT: a group algebra
 
         EXAMPLES::
 
@@ -615,9 +611,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
 
         - ``f`` -- a morphism of rings
 
-        OUTPUT:
-
-        A morphism of group algebras.
+        OUTPUT: a morphism of group algebras
 
         EXAMPLES::
 

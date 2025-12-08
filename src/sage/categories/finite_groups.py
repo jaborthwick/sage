@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups
 r"""
 Finite groups
@@ -81,7 +80,7 @@ class FiniteGroups(CategoryWithAxiom):
 
         def cardinality(self):
             """
-            Returns the cardinality of ``self``, as per
+            Return the cardinality of ``self``, as per
             :meth:`EnumeratedSets.ParentMethods.cardinality`.
 
             This default implementation calls :meth:`.order` if
@@ -152,7 +151,7 @@ class FiniteGroups(CategoryWithAxiom):
 
             This will eventually be a fall-back method for groups not defined
             over GAP. Right now, it just raises a
-            :class:`NotImplementedError`, until we include a non-GAP
+            :exc:`NotImplementedError`, until we include a non-GAP
             way of listing the conjugacy classes representatives.
 
             EXAMPLES::

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Attribute and method calling
 """
@@ -35,7 +34,7 @@ class AttrCallObject:
 
     def __call__(self, x, *args):
         """
-        Gets the ``self.name`` method from ``x``, calls it with
+        Get the ``self.name`` method from ``x``, calls it with
         ``self.args`` and ``args`` as positional parameters and
         ``self.kwds`` as keyword parameters, and returns the result.
 
@@ -76,7 +75,7 @@ class AttrCallObject:
 
     def __eq__(self, other):
         """
-        Equality testing
+        Equality testing.
 
         EXAMPLES::
 
@@ -91,7 +90,7 @@ class AttrCallObject:
 
     def __ne__(self, other):
         """
-        Equality testing
+        Equality testing.
 
         EXAMPLES::
 
@@ -106,7 +105,7 @@ class AttrCallObject:
 
     def __hash__(self):
         """
-        Hash value
+        Hash value.
 
         This method tries to ensure that, when two ``attrcall``
         objects are equal, they have the same hash value.
@@ -151,11 +150,11 @@ def attrcall(name, *args, **kwds):
 
     INPUT:
 
-    -  ``name`` -- a string of the name of the method you
-       want to call
+    - ``name`` -- string of the name of the method you
+      want to call
 
-    -  ``args, kwds`` -- arguments and keywords to be passed
-       to the method
+    - ``args, kwds`` -- arguments and keywords to be passed
+      to the method
 
     EXAMPLES::
 

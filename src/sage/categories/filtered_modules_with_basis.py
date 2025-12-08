@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Modules With Basis
 
@@ -159,7 +158,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                  over Integer Ring(i))_{i in Partitions}
 
             Checking this method on a filtered algebra. Note that this
-            will typically raise a :class:`NotImplementedError` when this
+            will typically raise a :exc:`NotImplementedError` when this
             feature is not implemented. ::
 
                 sage: A = AlgebrasWithBasis(ZZ).Filtered().example()
@@ -481,9 +480,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             - ``f`` -- a filtration-preserving linear map from ``self``
               to ``other`` (can be given as a morphism or as a function)
 
-            OUTPUT:
-
-            The graded linear map `\operatorname{gr} f`.
+            OUTPUT: the graded linear map `\operatorname{gr} f`
 
             EXAMPLES:
 
@@ -734,7 +731,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 sage: # needs sage.combinat sage.modules
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: (3*x).is_homogeneous()
                 True
                 sage: (x^3 - y^2).is_homogeneous()
@@ -817,7 +814,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 sage: # needs sage.combinat sage.modules
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: x.homogeneous_degree()
                 2
                 sage: (x^3 + 4*y^2).homogeneous_degree()
@@ -854,7 +851,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 raise ValueError("the zero element does not have a well-defined degree")
             if not self.is_homogeneous():
                 raise ValueError("element is not homogeneous")
-            return self.parent().degree_on_basis(self.leading_support())
+            return self.parent().degree_on_basis(next(iter(self.support())))
 
         # default choice for degree; will be overridden as necessary
         degree = homogeneous_degree
@@ -890,7 +887,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 sage: # needs sage.combinat sage.modules
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: x.maximal_degree()
                 2
                 sage: (x^3 + 4*y^2).maximal_degree()
@@ -1199,7 +1196,6 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 from collections import defaultdict
                 from sage.rings.integer_ring import ZZ
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                R = self.base_ring()
                 PR = PolynomialRing(ZZ, 't')
                 dims = defaultdict(ZZ)
                 for b in self.basis():

@@ -10,15 +10,15 @@ AUTHORS:
 - Michael Jung (2020): extended usage of :func:`is_atomic()`
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from sage.misc.latex import LatexExpr
 
 
-def is_atomic(expr, sep=['+', '-']):
+def is_atomic(expr, sep=['+', '-']) -> bool:
     r"""
     Helper function to check whether some LaTeX expression is atomic.
 
@@ -71,9 +71,23 @@ def is_atomic(expr, sep=['+', '-']):
         sage: is_atomic("(a mod b)", sep=['mod'])
         True
 
+    TESTS::
+
+        sage: is_atomic(1, sep=['*'])
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument must be a string
+        sage: is_atomic("a*b", sep='*')
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument 'sep' must be a list
+        sage: is_atomic("a*b", sep=[1])
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument 'sep' must consist of strings
     """
     if not isinstance(expr, str):
-        raise TypeError("The argument must be a string")
+        raise TypeError("the argument must be a string")
     if not isinstance(sep, list):
         raise TypeError("the argument 'sep' must be a list")
     elif any(not isinstance(s, str) for s in sep):
@@ -92,7 +106,7 @@ def is_atomic(expr, sep=['+', '-']):
     return True
 
 
-def is_atomic_wedge_txt(expression):
+def is_atomic_wedge_txt(expression) -> bool:
     r"""
     Helper function to check whether some text-formatted expression is atomic
     in terms of wedge products.
@@ -125,7 +139,6 @@ def is_atomic_wedge_txt(expression):
         False
         sage: is_atomic_wedge_txt(r"(a∧b∧c)")
         True
-
     """
     return is_atomic(expression, sep=['∧'])
 
@@ -171,7 +184,6 @@ def is_atomic_wedge_latex(expression):
         True
         sage: is_atomic_wedge_latex(r"\omega\wedge(\theta+a)")
         False
-
     """
     return is_atomic(expression, sep=['\\wedge'])
 
@@ -194,7 +206,6 @@ def format_mul_txt(name1, operator, name2):
         '(a+b)*(c+d)'
         sage: format_mul_txt(None, '*', 'b')
         sage: format_mul_txt('a', '*', None)
-
     """
     if name1 is None or name2 is None:
         return None
@@ -223,7 +234,6 @@ def format_mul_latex(name1, operator, name2):
         '\\left(a+b\\right)*\\left(c+d\\right)'
         sage: format_mul_latex(None, '*', 'b')
         sage: format_mul_latex('a', '*', None)
-
     """
     if name1 is None or name2 is None:
         return None
@@ -248,12 +258,11 @@ def format_unop_txt(operator, name):
         sage: format_unop_txt('-', '(a+b)')
         '-(a+b)'
         sage: format_unop_txt('-', None)
-
     """
     if name is None:
         return None
     if not is_atomic(name) or not is_atomic_wedge_txt(name):
-    #!# is_atomic_otimes_txt should be added
+        # ! is_atomic_otimes_txt should be added
         name = '(' + name + ')'
     return operator + name
 
@@ -272,12 +281,11 @@ def format_unop_latex(operator, name):
         sage: format_unop_latex('-', '(a+b)')
         '-(a+b)'
         sage: format_unop_latex('-', None)
-
     """
     if name is None:
         return None
     if not is_atomic(name) or not is_atomic_wedge_latex(name):
-    #!# is_atomic_otimes_latex should be added
+        # ! is_atomic_otimes_latex should be added
         name = r'\left(' + name + r'\right)'
     return operator + name
 
@@ -299,7 +307,6 @@ class FormattedExpansion(SageObject):
         x/2
         sage: latex(f)
         \frac{x}{2}
-
     """
     def __init__(self, txt=None, latex=None):
         r"""
@@ -309,7 +316,6 @@ class FormattedExpansion(SageObject):
             sage: f = FormattedExpansion('v', r'\tilde v')
             sage: f
             v
-
         """
         self._txt = txt
         self._latex = latex
@@ -324,7 +330,6 @@ class FormattedExpansion(SageObject):
             sage: f = FormattedExpansion('v', r'\tilde v')
             sage: f._repr_()
             'v'
-
         """
         return self._txt
 
@@ -338,6 +343,5 @@ class FormattedExpansion(SageObject):
             sage: f = FormattedExpansion('v', r'\tilde v')
             sage: f._latex_()
             '\\tilde v'
-
         """
         return self._latex

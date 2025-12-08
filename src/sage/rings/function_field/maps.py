@@ -157,7 +157,6 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
             sage: g = K.coerce_map_from(L)
             sage: f == g
             False
-
         """
         if type(self) is not type(other):
             return NotImplemented
@@ -166,7 +165,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
         return richcmp((self.domain(), self.codomain()),
                        (other.domain(), other.codomain()), op)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash value of this map.
 
@@ -199,7 +198,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
           From: Vector space of dimension 2 over Rational function field in x over Rational Field
           To:   Function field in y defined by y^2 - x*y + 4*x^3
     """
-    def __init__(self, V, K):
+    def __init__(self, V, K) -> None:
         """
         EXAMPLES::
 
@@ -245,7 +244,6 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
             ....:         for i in range(100):
             ....:             a = F.random_element()
             ....:             assert(f(t(a)) == a)
-
         """
         fields = self._K._intermediate_fields(self._V.base_field())
         fields.pop()
@@ -309,7 +307,7 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
           From: Function field in y defined by y^2 - x*y + 4*x^3
           To:   Vector space of dimension 2 over Rational function field in x over Rational Field
     """
-    def __init__(self, K, V):
+    def __init__(self, K, V) -> None:
         """
         Initialize.
 
@@ -325,7 +323,7 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space()
-            sage: TestSuite(t).run(skip="_test_category")
+            sage: TestSuite(t).run(skip='_test_category')
         """
         self._V = V
         self._K = K
@@ -359,7 +357,6 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
             ....:         for i in range(100):
             ....:             a = V.random_element()
             ....:             assert(t(f(a)) == a)
-
         """
         ret = [x]
         fields = self._K._intermediate_fields(self._V.base_field())
@@ -383,7 +380,7 @@ class FunctionFieldMorphism(RingHomomorphism):
         Function Field endomorphism of Rational function field in x over Rational Field
           Defn: x |--> 1/x
     """
-    def __init__(self, parent, im_gen, base_morphism):
+    def __init__(self, parent, im_gen, base_morphism) -> None:
         """
         Initialize.
 
@@ -393,7 +390,7 @@ class FunctionFieldMorphism(RingHomomorphism):
             sage: f = K.hom(1/x); f
             Function Field endomorphism of Rational function field in x over Rational Field
               Defn: x |--> 1/x
-            sage: TestSuite(f).run(skip="_test_category")
+            sage: TestSuite(f).run(skip='_test_category')
         """
         RingHomomorphism.__init__(self, parent)
 
@@ -451,7 +448,7 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
         sage: f(y).charpoly('y')
         y^3 + 6*x^3 + x
     """
-    def __init__(self, parent, im_gen, base_morphism):
+    def __init__(self, parent, im_gen, base_morphism) -> None:
         """
         Initialize.
 
@@ -461,7 +458,7 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + 6*x^3 + x)
             sage: f = L.hom(y*2)
-            sage: TestSuite(f).run(skip="_test_category")
+            sage: TestSuite(f).run(skip='_test_category')
         """
         FunctionFieldMorphism.__init__(self, parent, im_gen, base_morphism)
         # Verify that the morphism is valid:
@@ -496,7 +493,7 @@ class FunctionFieldMorphism_rational(FunctionFieldMorphism):
     """
     Morphism from a rational function field to a function field.
     """
-    def __init__(self, parent, im_gen, base_morphism):
+    def __init__(self, parent, im_gen, base_morphism) -> None:
         """
         Initialize.
 
@@ -563,7 +560,7 @@ class FunctionFieldConversionToConstantBaseField(Map):
           From: Rational function field in x over Rational Field
           To:   Rational Field
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         """
         Initialize.
 
@@ -579,7 +576,8 @@ class FunctionFieldConversionToConstantBaseField(Map):
 
     def _repr_type(self) -> str:
         r"""
-        Return the type of this map (a conversion), for the purposes of printing out self.
+        Return the type of this map (a conversion), for the purposes of
+        printing out ``self``.
 
         EXAMPLES::
 
@@ -588,7 +586,6 @@ class FunctionFieldConversionToConstantBaseField(Map):
             Conversion map:
               From: Rational function field in x over Rational Field
               To:   Rational Field
-
         """
         return "Conversion"
 
@@ -599,7 +596,6 @@ class FunctionFieldConversionToConstantBaseField(Map):
             sage: K.<x> = FunctionField(QQ)
             sage: QQ(K(1)) # indirect doctest
             1
-
         """
         return x.parent()._to_constant_base_field(x)
 
@@ -628,7 +624,6 @@ class FunctionFieldToFractionField(FunctionFieldVectorSpaceIsomorphism):
         sage: isinstance(f, FunctionFieldToFractionField)
         True
         sage: TestSuite(f).run()
-
     """
     def _call_(self, f):
         r"""
@@ -641,7 +636,6 @@ class FunctionFieldToFractionField(FunctionFieldVectorSpaceIsomorphism):
             sage: f = K.coerce_map_from(L)
             sage: f(~L.gen())
             1/x
-
         """
         return self.codomain()(f.numerator(), f.denominator())
 
@@ -773,7 +767,7 @@ class FunctionFieldCompletion(Map):
         b + b*t + b*t^3 + b*t^4 + (b + 1)*t^5 + (b + 1)*t^7 + b*t^9 + b*t^11
         + b*t^12 + b*t^13 + b*t^15 + b*t^16 + (b + 1)*t^17 + (b + 1)*t^19 + O(t^20)
     """
-    def __init__(self, field, place, name=None, prec=None, gen_name=None):
+    def __init__(self, field, place, name=None, prec=None, gen_name=None) -> None:
         """
         Initialize.
 
@@ -832,7 +826,7 @@ class FunctionFieldCompletion(Map):
 
     def _call_(self, f):
         """
-        Call the completion for f
+        Call the completion for f.
 
         EXAMPLES::
 
